@@ -46,11 +46,18 @@ module Blog =
     ///  - `num` - whatever
     let hello num = 42
     [<DataContract>]
+    type PagePreview = {
+        ID : int
+        PubDate : DateTime
+        Title : string
+        Slug : string
+    }
+    [<DataContract>]
     type Entry = {
         [<field : DataMember(Name="ID")>]
-        ID : string
-        [<field : DataMember(Name="URL")>]
-        URL : string
+        ID : int
+        [<field : DataMember(Name="Slug")>]
+        Slug : string
         [<field : DataMember(Name="Title")>]
         Title : string
         [<field : DataMember(Name="PubDate")>]
@@ -59,6 +66,10 @@ module Blog =
         Content : string
         [<field : DataMember(Name="Published")>]
         Published : bool
+        [<field : DataMember(Name="NextPage")>]
+        NextPage : PagePreview option
+        [<field : DataMember(Name="PrevPage")>]
+        PrevPage : PagePreview option
     }
     [<DataContract>]
     type Page = {
@@ -93,12 +104,14 @@ module Blog =
     let items = [
         for el in doc.Descendants(xn "item") ->
             {
-                ID = el.Element(wordpressNS + "post_id").Value
-                URL = el.Element(wordpressNS + "post_name").Value
+                ID = el.Element(wordpressNS + "post_id").Value |> int
+                Slug = el.Element(wordpressNS + "post_name").Value
                 Title = el.Element(xn "title").Value
                 PubDate = el.Element(xn "pubDate").Value |> ParseDate
                 Content = el.Element(contentNS + "encoded").Value
                 Published = if String.Compare(el.Element(wordpressNS + "status").Value, "publish") > -1 then true else false
+                NextPage = None
+                PrevPage = None
             }
     ]
 
@@ -130,6 +143,15 @@ module Blog =
         
         (publishedPosts |> Seq.toArray).[startOf..endOf]
 
+    let EntryToPagePreview entry = 
+        let item : PagePreview = {
+            ID = entry.ID
+            PubDate = entry.PubDate
+            Title = entry.Title
+            Slug = entry.Slug
+        }
+        item
+
 
 
 
@@ -159,9 +181,25 @@ let blog : WebPart =
                 PrevPage = Blog.HasPrevPage 5 pageNo
             }
             page |> OKJsonBytes
-        );
-        path "/blog/posts/pages/count" >>= context(fun _ -> OK <| (Blog.CountPages 5).ToString())
-        path "/blog/tags/all" >>= context(fun _ -> Blog.tags |> Seq.toArray |> OKJsonBytes)
+        )
+        pathScan "/blog/posts/entry/%d" (fun (entryId) ->
+            // TODO: what if there is no entry found? first check if it exists! 
+            let foundIndex = Blog.items |> Seq.findIndex (fun item -> entryId |> item.ID.Equals)
+            let foundItem = Blog.items.[foundIndex]
+            let nextItem = Blog.items.[foundIndex + 1]
+            let prevItem = Blog.items.[foundIndex - 1]
+            // TODO: there may not be a next or previous
+            let nextPage = Blog.EntryToPagePreview nextItem
+            let prevPage = Blog.EntryToPagePreview prevItem
+            let item = {
+                foundItem with
+                    NextPage = Some(nextPage)
+                    PrevPage = Some(prevPage)
+            }
+            OKJsonBytes(item)
+        )
+        path "/blog/posts/pages/count" >>= (OK <| (Blog.CountPages 5).ToString())
+        path "/blog/tags/all" >>= (Blog.tags |> Seq.toArray |> OKJsonBytes)
     ]
 
 
