@@ -70,6 +70,8 @@ module Blog =
         NextPage : PagePreview option
         [<field : DataMember(Name="PrevPage")>]
         PrevPage : PagePreview option
+        [<field : DataMember(Name="Categories")>]
+        Categories : string []
     }
     [<DataContract>]
     type Page = {
@@ -112,6 +114,7 @@ module Blog =
                 Published = if String.Compare(el.Element(wordpressNS + "status").Value, "publish") > -1 then true else false
                 NextPage = None
                 PrevPage = None
+                Categories = [|for categoryEl in el.Elements(xn "category") -> categoryEl.Value|] 
             }
     ]
 
