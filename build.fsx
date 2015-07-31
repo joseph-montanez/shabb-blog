@@ -259,29 +259,24 @@ Target "KeepBuilding" (fun _ ->
     let proc = ref 0
     use watcher = !! "src/**/*.fs" |> WatchChanges (fun changes ->
         tracefn "%A" changes
-//
-//        let existingProcs = getProcessesByName "ShabbBlog.exe"
-//        tracefn "Previous process count: %d" (Seq.length existingProcs) 
-//        existingProcs
-//            |> Seq.map (fun proc -> 
-//                tracefn "Killing process %d" proc.Id
-//                killProcessById proc.Id)
-//            |> ignore
-//        killProcess "ShabbBlog.exe"
+
+        // Kill all previous processes - which is just the web server
+        tracefn "Killing web server"
         killCreatedProcesses <- true
         do killAllCreatedProcesses()
         
+        // Build!!!!
         !! solutionFile
         |> MSBuildRelease "" "Rebuild"
         |> ignore
 
-        tracefn "Will This print??????!?!?!?!?"
 
-        tracefn "Running Process"
+        tracefn "Running Web Server"
         let started = ProcessHelper.StartProcess((fun processInfo -> 
             processInfo.FileName <- "src/ShabbBlog/bin/Release/ShabbBlog.exe"
         ))
-        tracefn "Did this run? process"
+
+        tracefn "Done waiting for code changes..."
     )
 
     System.Console.ReadLine() |> ignore //Needed to keep FAKE from exiting
