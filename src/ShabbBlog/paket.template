@@ -1,0 +1,23 @@
+type project
+owners
+    Joseph Montanez
+authors 
+    Joseph Montanez
+projectUrl
+    http://github.com/joseph-montanez/ShabbBlog
+iconUrl
+    https://raw.githubusercontent.com/joseph-montanez/ShabbBlog/master/docs/files/img/logo.png
+licenseUrl
+    http://github.com/joseph-montanez/ShabbBlog/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    
+summary
+    
+description
+    Description not set
+
+
