@@ -129,6 +129,9 @@ Target "Build" (fun _ ->
     !! solutionFile
     |> MSBuildRelease "" "Rebuild"
     |> ignore
+
+    
+    CopyFile "src/ShabbBlog/blog-4fd782ad.xml" "src/ShabbBlog/bin/Release/blog-4fd782ad.xml"
 )
 
 // --------------------------------------------------------------------------------------
@@ -256,7 +259,6 @@ Target "KeepRunning" (fun _ ->
 )
 
 Target "KeepBuilding" (fun _ ->
-    let proc = ref 0
     use watcher = !! "src/**/*.fs" |> WatchChanges (fun changes ->
         tracefn "%A" changes
 
@@ -266,9 +268,7 @@ Target "KeepBuilding" (fun _ ->
         do killAllCreatedProcesses()
         
         // Build!!!!
-        !! solutionFile
-        |> MSBuildRelease "" "Rebuild"
-        |> ignore
+        run "Build"
 
 
         tracefn "Running Web Server"

@@ -16,6 +16,14 @@ In order to run the application run
 
 This runs on port 8083, you can access the blog API via http://localhost:8083/
 
+## Building
+
+### Auto Build and Server Reload on Change
+
+When you are making edits you can run a special task to build and restart the web server to see changes. To do this run the following command.
+
+	$ build.cmd KeepBuilding
+
 ## Maintainer(s)
 
 - [@joseph-montanez](https://github.com/joseph-montanez)
