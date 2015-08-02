@@ -131,7 +131,7 @@ Target "Build" (fun _ ->
     |> ignore
 
     
-    CopyFile "src/ShabbBlog/blog-4fd782ad.xml" "src/ShabbBlog/bin/Release/blog-4fd782ad.xml"
+    CopyFile "src/ShabbBlog/bin/Release/blog-4fd782ad.xml" "src/ShabbBlog/data/blog-4fd782ad.xml"
 )
 
 // --------------------------------------------------------------------------------------
