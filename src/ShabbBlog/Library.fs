@@ -1,5 +1,9 @@
 module ShabbBlog
 
+open ShabbBlog.Xml
+open ShabbBlog.Tag
+open ShabbBlog.Entry
+
 //-- Log Requests to Console
 open System
 
@@ -53,68 +57,31 @@ module Blog =
         Slug : string
     }
     [<DataContract>]
-    type Entry = {
-        [<field : DataMember(Name="ID")>]
-        ID : int
-        [<field : DataMember(Name="Slug")>]
-        Slug : string
-        [<field : DataMember(Name="Title")>]
-        Title : string
-        [<field : DataMember(Name="PubDate")>]
-        PubDate : DateTime
-        [<field : DataMember(Name="Content")>]
-        Content : string
-        [<field : DataMember(Name="Published")>]
-        Published : bool
-        [<field : DataMember(Name="NextPage")>]
-        NextPage : PagePreview option
-        [<field : DataMember(Name="PrevPage")>]
-        PrevPage : PagePreview option
-        [<field : DataMember(Name="Categories")>]
-        Categories : string []
-    }
-    [<DataContract>]
     type Page = {
         [<field : DataMember(Name="Items")>]
-        Items : Entry[]
+        Items : Entry.Entry[]
         [<field : DataMember(Name="NextPage")>]
         NextPage : bool
         [<field : DataMember(Name="PrevPage")>]
         PrevPage : bool
     }
-    [<DataContract>]
-    type Tag = {
-        [<field : DataMember(Name="Name")>]
-        Name: string
-        [<field : DataMember(Name="Slug")>]
-        Slug: string
-    }
     let processDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)
     let xmlFilename = processDir + "/data/blog-4fd782ad.xml"
     let ParseDate date = System.DateTime.Parse date
-    let xn a = XName.Get(a)
-    let doc = XDocument.Load(xmlFilename)
-    let contentNS = XNamespace.Get "http://purl.org/rss/1.0/modules/content/"
-    let wordpressNS = XNamespace.Get "http://wordpress.org/export/1.0/"
-    let tags = [
-        for el in doc.Descendants(wordpressNS + "tag") ->
-            {
-                Name = el.Element(wordpressNS + "tag_name").Value
-                Slug = el.Element(wordpressNS + "tag_slug").Value
-            }
-    ]
+    let doc = Xml.load xmlFilename
+    let tags = Tag.parse doc
     let items = [
-        for el in doc.Descendants(xn "item") ->
+        for el in doc.Descendants(Xml.xn "item") ->
             {
-                ID = el.Element(wordpressNS + "post_id").Value |> int
-                Slug = el.Element(wordpressNS + "post_name").Value
-                Title = el.Element(xn "title").Value
-                PubDate = el.Element(xn "pubDate").Value |> ParseDate
-                Content = el.Element(contentNS + "encoded").Value
-                Published = if String.Compare(el.Element(wordpressNS + "status").Value, "publish") > -1 then true else false
+                ID = el.Element(Xml.wordpressNS + "post_id").Value |> int
+                Slug = el.Element(Xml.wordpressNS + "post_name").Value
+                Title = el.Element(Xml.xn "title").Value
+                PubDate = el.Element(Xml.xn "pubDate").Value |> ParseDate
+                Content = el.Element(Xml.contentNS + "encoded").Value
+                Published = if String.Compare(el.Element(Xml.wordpressNS + "status").Value, "publish") > -1 then true else false
                 NextPage = None
                 PrevPage = None
-                Categories = [|for categoryEl in el.Elements(xn "category") -> categoryEl.Value|] 
+                Categories = [|for categoryEl in el.Elements(Xml.xn "category") -> categoryEl.Value|] 
             }
     ]
 
