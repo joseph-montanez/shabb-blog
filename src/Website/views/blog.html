@@ -1,0 +1,17 @@
+<div ng-include src="'views/header.html'"></div>
+<h1 class="innovate">Blog</h1>
+<div class="content">
+	<ul class="blogs">
+	  <li ng-repeat="blog in Blogs.Items">
+	    <h2><a href="#!/blog/entry/{{blog.Slug}}/{{blog.ID}}">
+	    	<span class="date">{{blog.PubDate | date:mediumDate}}</span>
+	    	{{blog.Title}}
+	    </a></h2>
+	  </li>
+	</ul>
+
+	<a class="page prev" href="#!/blog/page/{{PageNo - 1}}" ng-if="Blogs.PrevPage">Previous Page</a>
+	<a class="page next" href="#!/blog/page/{{PageNo + 1}}" ng-if="Blogs.NextPage">Next Page</a>
+	<br clear="both">
+</div>
+<div ng-include src="'views/footer.html'"></div>

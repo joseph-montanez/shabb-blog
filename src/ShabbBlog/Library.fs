@@ -1,10 +1,10 @@
 module ShabbBlog
 
-open ShabbBlog.Xml
-open ShabbBlog.Tag
-open ShabbBlog.Pager.Page
-open ShabbBlog.Entry
-open ShabbBlog.Pagination
+open XmlTools
+open Tag
+open Pager
+open Entry
+open Pagination
 
 //-- Log Requests to Console
 open System
@@ -23,6 +23,8 @@ open System.IO
 open System.Diagnostics
 open System.Text
 
+//open FSharp.Data
+
 //-- Suave Web Server
 open Suave
 open Suave.Logging
@@ -35,6 +37,7 @@ open Suave.Http.RequestErrors
 open Suave.Http.Applicatives
 open Suave.Http.Response
 open Suave.Http.Files
+open Suave.Http.Writers
 open Suave.Utils
 open Suave.Json
 
@@ -58,6 +61,8 @@ module Blog =
     let tags = Tag.parse doc
     let items : Entry.Entry list = Entry.Parse doc
 
+    let sample = "blog-4fd782ad.xml"
+
     let GetPushblishedPosts (items : Entry.Entry list) =
         List.filter (fun (entry : Entry.Entry) -> entry.Published) items
 
@@ -74,7 +79,7 @@ module Blog =
     let GetPost items index = items[index]
 
     let HasNextPage perPage pageNo = perPage * pageNo < publishedPosts.Length
-    let HasPrevPage perPage pageNo = perPage * pageNo > 1
+    let HasPrevPage pageNo = pageNo > 1
 
     let CountPages perPage =
         let pages : double = (double publishedPosts.Length) / (double perPage)
@@ -106,7 +111,18 @@ let logger = Loggers.ConsoleWindowLogger LogLevel.Error
 let cfg = {
     defaultConfig with
         logger = logger
+        bindings = [ HttpBinding.mk' HTTP "0.0.0.0" 8083 ]
 }
+
+let allow_cors : WebPart =
+    choose [
+        OPTIONS 
+            >>= setHeader "Access-Control-Allow-Origin" "*" 
+            >>= setHeader "Access-Control-Allow-Methods" "POST, GET, OPTIONS" 
+            >>= setHeader "Access-Control-Allow-Headers" "X-Requested-With, Origin, Content-Type, Access-Control-Allow-Origin" 
+            >>= OK ""
+    ]
+
 
 let testapp : WebPart =
   choose
@@ -117,11 +133,19 @@ let testapp : WebPart =
 let blog : WebPart =
   choose
     [
-        pathScan "/blog/posts/page/%d" (fun (pageNo) ->
-            let page : PageIndex = {
-                Items = Blog.GetPage 5 pageNo
+        GET >>= setHeader "Access-Control-Allow-Origin" "*" >>= pathScan "/blog/posts/page/%d" (fun (pageNo) ->
+            let entryToExcerpt (entry:Entry.Entry.Entry) = 
+                let excerpt : Entry.Excerpt = { 
+                    ID = entry.ID
+                    Slug = entry.Slug
+                    Title = entry.Title
+                    PubDate = entry.PubDate
+                }
+                excerpt
+            let page : Page.PageIndex = {
+                Items = Blog.GetPage 5 pageNo |> Array.map entryToExcerpt
                 NextPage = Blog.HasNextPage 5 pageNo
-                PrevPage = Blog.HasPrevPage 5 pageNo
+                PrevPage = Blog.HasPrevPage pageNo
             }
             page |> OKJsonBytes
         )
@@ -147,7 +171,8 @@ let blog : WebPart =
 
 
 choose [
-    GET >>= path "/" >>= GetIndex;
+    allow_cors
+    GET >>= path "/" >>= setHeader "ABC" "123" >>= OK "YES!"
     GET >>= path "/static" >>= GetStatic;
     //GET >>= pathScan "/api/blog/page/%d" JsonResponse.GetCar;
     testapp

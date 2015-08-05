@@ -1,4 +1,4 @@
-﻿namespace ShabbBlog.Entry
+﻿namespace Entry
 
 open System
 
@@ -11,9 +11,9 @@ open System.Runtime.Serialization
 open System.Runtime.Serialization.Json
 open System.IO
 
-open ShabbBlog.Xml
-open ShabbBlog.Utils
-open ShabbBlog.Pagination
+open XmlTools
+open Utils
+open Pagination
 
 
 module Entry =
@@ -37,6 +37,18 @@ module Entry =
         PrevPage : Pagination.PagePreview option
         [<field : DataMember(Name="Categories")>]
         Categories : string []
+    }
+
+    [<DataContract>]
+    type Excerpt = {
+        [<field : DataMember(Name="ID")>]
+        ID : int
+        [<field : DataMember(Name="Slug")>]
+        Slug : string
+        [<field : DataMember(Name="Title")>]
+        Title : string
+        [<field : DataMember(Name="PubDate")>]
+        PubDate : DateTime
     }
 
     let Parse (doc : XDocument) = [

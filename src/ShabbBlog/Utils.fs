@@ -1,4 +1,4 @@
-﻿namespace ShabbBlog.Utils
+﻿namespace Utils
 
 
 open System

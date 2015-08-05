@@ -1,0 +1,55 @@
+<div ng-include src="'views/header.html'"></div>
+<h1 class="innovate">Portfolio</h1>
+<div class="content">
+	<h2>Open Source Projects</h2>
+	
+	<h3>Relative Deployment</h3>
+	<p>
+		<strong>Relative Deployment</strong> is a Microsoft Windows process controller ideally for running web applications on the desktop. The key feature is finding available ports to deploy a process such as a webserver, database or other process. you can open a web address to the users default browser, or use something like Mozilla's XulRunner to a controlled browser UI experience. The application is tiny, uses JSON for configurations and is designed for a stub executable for you to adopt as your application. Try downloading the source at <a href="https://github.com/joseph-montanez/relative-deployment" rel="external" class="ui-link">Github</a>.
+	</p>
+	<br clear="left" />
+
+	<h3>Phojs</h3>
+	<p>
+		<strong>Phojs</strong> is a proof of concept transcoder, converting PHP into JavaScript. There are several other projects out there but none can transcode code outside of PHP. <strong>Relative Deployment</strong> is a Microsoft Windows process controller ideally for running web applications on the desktop. The key feature is finding available ports to deploy a process such as a webserver, database or other process. you can open a web address to the users default browser, or use something like Mozilla's XulRunner to a controlled browser UI experience. The application is tiny, uses JSON for configurations and is designed for a stub executable for you to adopt as your application. Try For example mixing HTML and PHP together makes it impossible for other PHP to JavaScript transcoders properly handle the surround HTML moving that into javascript strings. The goal of this project was to reuse the same templates in javascript without rewriting it in JavaScript. The strength behind Phojs is an abstract syntax tree that can parse the external HTML and PHP. The first pass generates coffeescript. From there coffeescript is transcoded into javascript using the PHP to coffeescript library. On top of that it can use PHP.js and auto included minified functions you used in that file. Visit the demo application, <a href="/phojs" rel="external">Phojs</a>. Want to download and run it your self on Windows or Linux? Try downloading the source at <a href="https://github.com/joseph-montanez/phojs" rel="external">Github</a>.
+	</p>
+	<br clear="left" />
+	
+	<h3>Shado List</h3>
+	<img class="profile" style="max-width: 480px; height: 200px;" src="http://s3.amazonaws.com/shabb.com/shado.PNG" />
+	<p>
+		<strong>Shado List</strong> is a shared to do list built on similar techniques that NodeJS uses, but written in PHP using a library called React. This proof of concept uses React and jQuery Mobile together, bringing a cohesive experience to the end user. Shado uses websockets to deliver real-time communications between multiple users of the same shared list. Visit the demo application, <a href="/shado" rel="external">Shado List</a>. Try with two browser tabs, a phone, or another mobile device! Want to download and run it your self on Windows or Linux? Try downloading the source at <a href="https://github.com/joseph-montanez/shado" rel="external">Github</a>.
+	</p>
+	<br clear="left" />
+	<br />
+
+	<h2>Work</h2>
+	<h3>Wazillo Media</h3>
+	<img class="profile" style="width: 100%; max-width: 480px;" src="http://s3.amazonaws.com/shabb.com/wazillo.png" />
+	<p>
+		<strong>Wazillo Media</strong> is a website that streams and records live content. My role in this website was to integrate Wowza Streaming Server and Flowplayer. The content streamed live needed to be recorded on the same server so I developed a Java plugin for Wowza. Also all recordings needed to be automatic which relied on a cron job. There is another side to this, the company provides streaming services for bars and venues. I was in charge of integrating rtsp streams into Wowza from each venue.
+	</p>
+	<br clear="left" />
+
+	<h3>Inner Greek</h3>
+	<img class="profile" style="width: 100%; max-width: 480px" src="http://s3.amazonaws.com/shabb.com/innergreek.png" />
+	<p>
+		<strong>Inner Greek</strong> is a social fraternity and sorority platform. My roles in this application was to create a real-time notification system, for incoming requests and messages. I also created this application's billing system for handling subscriptions. Real-time communications used the same technology that I had established. NodeJS enabled myself to create a web server that allowed thousands of connections per second. Socket.IO is a web socket library that falls back to comet and flash tcp messages. NodeJS and Socket.IO provided the starting point of building the real-time system. There are other factors into building a real time system, which relied on trusted messages. Since the logic lived in PHP I had to build a transport library for PHP to have the ability to communicate to NodeJS. Also things like multi-tab browsers created some complications to work around. I needed to ensure all browsers and tabs receive the same message of that specific user, and marking a notice "read" deactivates all others in the other browsers and tabs.
+	</p>
+	<br clear="left" />
+
+	<h3>San Diego Bike and Kayak</h3>
+	<img class="profile" style="width: 100%; max-width: 480px" src="http://s3.amazonaws.com/shabb.com/sdbk.png" />
+	<p>
+		<strong>San Diego Bike and Kayak</strong> is a tour and rental system. It features a customer, in-store and concierge portal. The in-store provides real-time information to allow staff to see what rentals and tours are available or have the least capacity. Coupled with vouchers, discounts and coupons, the staff has all the controls needed to setup and price given the the reduction options. Each tour has a multi-tier attribute structure. An attribute can be price  there is a general, grouped, daily and a to the hour price. There are certain limitations at specific times due to city regulation. For example X persons or Y kayaks on the water at a given time, which ever is met first.
+	</p>
+	<br clear="left" />
+
+	<h3>Sitbetter</h3>
+	<img class="profile" style="width: 100%; max-width: 480px" src="http://s3.amazonaws.com/shabb.com/sitbetter.png" />
+	<p>
+		<strong>Sitbetter</strong> is a shopping site for chairs and accessories. It features a powerful drill down engine, built with speed and ease of use. Chairs have extensive configurations available such as material selector. The drill down menu creates over 500,000,000+ different combinations of chairs, which created a performance issue. A caching system was set in place to quickly generating any drill down page. This entire system was built from scratch and features amazon integration, tons of exports including shopzilla, google shopping and more.
+	</p>
+	<br clear="left" />
+</div>
+<div ng-include src="'views/footer.html'"></div>

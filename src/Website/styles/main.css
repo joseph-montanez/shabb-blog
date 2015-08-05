@@ -1,0 +1,212 @@
+/* Space out content a bit */
+body {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.marketing,
+.footer {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+/* Custom page header */
+.header {
+	border-bottom: 1px solid #e5e5e5;
+}
+/* Make the masthead heading the same height as the navigation */
+.header h3 {
+	margin-top: 0;
+	margin-bottom: 0;
+	line-height: 40px;
+	padding-bottom: 19px;
+}
+
+/* Custom page footer */
+.footer {
+	padding-top: 19px;
+	color: #777;
+	border-top: 1px solid #e5e5e5;
+}
+
+/* Customize container */
+@media (min-width: 768px) {
+	.container {
+	max-width: 730px;
+	margin: 0 auto;
+	}
+}
+.container-narrow > hr {
+	margin: 30px 0;
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+	/* Remove the padding we set earlier */
+	.header,
+	.marketing,
+	.footer {
+	padding-left: 0;
+	padding-right: 0;
+	}
+	/* Space out the masthead */
+	.header {
+	margin-bottom: 30px;
+	}
+}
+
+
+body {
+	text-align: center;
+	color: #172A0A;
+	margin: 0;
+	padding: 0;
+}
+h1, h2, h3, h4 {
+	font-family: 'Droid Sans', sans-serif;
+}
+.blogs h2 {
+	text-align: left;
+	line-height: 1.5em;
+	/*background: #ACD463;*/
+	/*color: #fff;*/
+	color: #666666;
+	padding: 2px;
+	border-bottom: 2px solid #D6DE62;
+}
+.blogs h2 a {
+	color: inherit;
+	text-decoration: none;
+}
+.blogs li {
+	list-style: none;
+}
+.blogs h2 span.date {
+	display: block;
+	float: right;
+	width: 7em;
+	text-align: left;
+	background: #C5D58A;
+	color: #fff;
+	padding-left: 1em;
+}
+.menu {
+	font-family: 'Holtwood One SC', serif;
+	min-height: 48px;
+	background: #ffffff;
+	color: #999999;
+	line-height: 48px;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	border-bottom: 4px solid #C5D58A;
+}
+.menu li {
+	display: inline;
+	border-right: 2px solid #9DAA58;
+	text-shadow: none;
+	font-weight: normal;
+}
+
+.menu li:last-child {
+	border: none;
+}
+.menu a.ui-link:link, .menu a.ui-link:visited {
+	color: #666666;
+}
+.menu a, .menu a:link, .menu a:visited, .menu a:active {
+	text-decoration: none;
+	padding: 11px 13px;
+}
+.menu a:active, .menu a:hover, .menu a.active {
+	color: #172A0A;
+}
+.menu a.ui-link:active, .menu a.ui-link:hover, .menu a.ui-link.active {
+	color: #172A0A;
+}
+
+.logo {
+	margin: 0 auto;
+	margin-top: 75px;
+	background-image: url(http://s3.amazonaws.com/shabb.com/logo-black.png);
+	width: 239px;
+	height: 106px;
+	background-size: 239px 106px;
+}
+.innovate {
+	font-family: 'Courgette', cursive;
+	font-size: 48px; 
+	/*line-height: 0px;*/
+	font-weight: normal;
+}
+.heading, strong, .page.next, .page.prev {
+	color: #86902F;
+	font-family: 'Holtwood One SC', serif;
+	font-weight: normal;
+}
+.content {
+	font-family: Verdana, sans-serif;
+	background-color: #fff;
+	color: #333;
+	padding: 1em;
+	margin: 0 auto;
+	text-align: left;
+	max-width: 900px;
+	line-height: 1.5em;
+}
+.content p { 
+	font-family: 'Droid Sans', sans-serif;
+	margin-top: 0;
+}
+.profile {
+	float: left; 
+	margin-right: 10px
+}
+.content pre {
+	background: #C5D58A;
+	padding: 1em;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	color: #333;
+}
+
+.page.next {
+	float: right;
+}
+.page.prev {
+	float: left;
+}
+
+@media (max-width: 320px) {
+	.logo {
+		margin-top: 20px;
+	}
+	.menu li {
+		display: block;
+	}
+	.menu a {
+		display: block;
+		line-height: 24px;
+	}
+	.menu li {
+		border-right: none;
+		border-bottom: 2px solid #9DAA58;
+	}
+	.menu li:last-child {
+		border-bottom: none;
+	}
+	.profile {
+		display: block;
+		margin: 0 auto;
+		float: none;
+	}
+}
+@media 
+(-webkit-min-device-pixel-ratio: 2), 
+(min-resolution: 192dpi) { 
+	.logo {
+		/*background-image: url(http://s3.amazonaws.com/shabb.com/logo%402x.png);*/
+	}
+}

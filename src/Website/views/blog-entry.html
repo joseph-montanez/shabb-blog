@@ -1,0 +1,18 @@
+<div ng-include src="'views/header.html'"></div>
+<h1 class="innovate" ng-bind="Blog.Title"></h1>
+<div class="content">
+	<h2 class="date">{{Blog.PubDate | date:longDate}}</h2>
+	<div compile="Blog.Content"></div>
+	<br />
+	<a class="page prev" href="#!blog/entry/{{Blog.PrevEntry.value.URL}}/{{Blog.PrevEntry.value.ID}}" ng-if="Blog.PrevEntry != null">Previous Entry</a>
+	<a class="page next" href="#!blog/entry/{{Blog.NextEntry.value.URL}}/{{Blog.NextEntry.value.ID}}" ng-if="Blog.NextEntry != null">Next Entry</a>
+	<br clear="both">
+</div>
+
+<ul class="blogs">
+  <li ng-repeat="category in Blog.Categories">
+    {{category}}
+  </li>
+</ul>
+
+<div ng-include src="'views/footer.html'"></div>

@@ -1,6 +1,6 @@
-﻿namespace ShabbBlog.Tag
+﻿namespace Tag
 
-open ShabbBlog.Xml
+open XmlTools
 
 //-- XML for Parsing
 open System.Xml

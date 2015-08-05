@@ -1,4 +1,4 @@
-﻿namespace ShabbBlog.Xml
+﻿namespace XmlTools
 
 //-- XML for Parsing
 open System.Xml

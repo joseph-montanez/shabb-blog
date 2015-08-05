@@ -1,4 +1,4 @@
-﻿namespace ShabbBlog.Pagination
+﻿namespace Pagination
 
 //-- JSON Serialization
 open System.Runtime.Serialization
