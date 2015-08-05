@@ -259,6 +259,8 @@ Target "KeepRunning" (fun _ ->
 )
 
 Target "KeepBuilding" (fun _ ->
+    //-- Build First
+    run "Build"
     use watcher = !! "src/**/*.fs" |> WatchChanges (fun changes ->
         tracefn "%A" changes
 
@@ -270,11 +272,12 @@ Target "KeepBuilding" (fun _ ->
         // Build!!!!
         run "Build"
 
-
         tracefn "Running Web Server"
-        let started = ProcessHelper.StartProcess((fun processInfo -> 
-            processInfo.FileName <- "src/ShabbBlog/bin/Release/ShabbBlog.exe"
-        ))
+        let webserver = "src/ShabbBlog/bin/Release/ShabbBlog.exe"
+        if System.IO.File.Exists(webserver) then
+            ProcessHelper.StartProcess((fun processInfo -> 
+                processInfo.FileName <- webserver
+            ))
 
         tracefn "Done waiting for code changes..."
     )

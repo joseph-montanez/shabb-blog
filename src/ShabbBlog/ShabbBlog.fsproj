@@ -60,6 +60,12 @@
   -->
   <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
+    <Compile Include="Utils.fs" />
+    <Compile Include="Xml.fs" />
+    <Compile Include="Tag.fs" />
+    <Compile Include="Pagination.fs" />
+    <Compile Include="Entry.fs" />
+    <Compile Include="Page.fs" />
     <Compile Include="Library.fs" />
     <None Include="Script.fsx" />
     <None Include="paket.references" />

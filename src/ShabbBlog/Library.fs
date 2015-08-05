@@ -2,7 +2,9 @@ module ShabbBlog
 
 open ShabbBlog.Xml
 open ShabbBlog.Tag
+open ShabbBlog.Pager.Page
 open ShabbBlog.Entry
+open ShabbBlog.Pagination
 
 //-- Log Requests to Console
 open System
@@ -43,78 +45,49 @@ open Suave.Json
 ///     let h = Library.hello 1
 ///     printfn "%d" h
 ///
-module Blog = 
+module Blog =
     /// Returns 42
     ///
     /// ## Parameters
     ///  - `num` - whatever
     let hello num = 42
-    [<DataContract>]
-    type PagePreview = {
-        ID : int
-        PubDate : DateTime
-        Title : string
-        Slug : string
-    }
-    [<DataContract>]
-    type Page = {
-        [<field : DataMember(Name="Items")>]
-        Items : Entry.Entry[]
-        [<field : DataMember(Name="NextPage")>]
-        NextPage : bool
-        [<field : DataMember(Name="PrevPage")>]
-        PrevPage : bool
-    }
     let processDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName)
     let xmlFilename = processDir + "/data/blog-4fd782ad.xml"
     let ParseDate date = System.DateTime.Parse date
-    let doc = Xml.load xmlFilename
+    let doc = Xml.Load xmlFilename
     let tags = Tag.parse doc
-    let items = [
-        for el in doc.Descendants(Xml.xn "item") ->
-            {
-                ID = el.Element(Xml.wordpressNS + "post_id").Value |> int
-                Slug = el.Element(Xml.wordpressNS + "post_name").Value
-                Title = el.Element(Xml.xn "title").Value
-                PubDate = el.Element(Xml.xn "pubDate").Value |> ParseDate
-                Content = el.Element(Xml.contentNS + "encoded").Value
-                Published = if String.Compare(el.Element(Xml.wordpressNS + "status").Value, "publish") > -1 then true else false
-                NextPage = None
-                PrevPage = None
-                Categories = [|for categoryEl in el.Elements(Xml.xn "category") -> categoryEl.Value|] 
-            }
-    ]
+    let items : Entry.Entry list = Entry.Parse doc
 
-    let GetPushblishedPosts items = 
-        List.filter (fun entry -> entry.Published) items
+    let GetPushblishedPosts (items : Entry.Entry list) =
+        List.filter (fun (entry : Entry.Entry) -> entry.Published) items
 
-    let SortPostsByDate items =
-        List.sortBy (fun entry -> -entry.PubDate.ToBinary()) items
+    let SortPostsByDate (items : Entry.Entry list) =
+        List.sortBy (fun (entry : Entry.Entry) -> -entry.PubDate.ToBinary()) items
 
     let GetSortedPushblishedPosts items =
-        items 
+        items
             |> GetPushblishedPosts
             |> SortPostsByDate
 
     let publishedPosts = items |> GetSortedPushblishedPosts
 
     let GetPost items index = items[index]
-    
+
     let HasNextPage perPage pageNo = perPage * pageNo < publishedPosts.Length
     let HasPrevPage perPage pageNo = perPage * pageNo > 1
-    
-    let CountPages perPage = 
+
+    let CountPages perPage =
         let pages : double = (double publishedPosts.Length) / (double perPage)
         (int (Math.Ceiling pages))
 
-    let GetPage perPage pageNo = 
+    let GetPage perPage pageNo =
         let startOf = Math.Max(0, perPage * (pageNo - 1))
         let endOf = Math.Min(publishedPosts.Length - 1, startOf + perPage)
-        
+
         (publishedPosts |> Seq.toArray).[startOf..endOf]
 
-    let EntryToPagePreview entry = 
-        let item : PagePreview = {
+    let EntryToPagePreview (entry : Entry.Entry) =
+        let item : Pagination.PagePreview = {
             ID = entry.ID
             PubDate = entry.PubDate
             Title = entry.Title
@@ -144,16 +117,16 @@ let testapp : WebPart =
 let blog : WebPart =
   choose
     [
-        pathScan "/blog/posts/page/%d" (fun (pageNo) -> 
-            let page : Blog.Page = {
-                Items = Blog.GetPage 5 pageNo 
+        pathScan "/blog/posts/page/%d" (fun (pageNo) ->
+            let page : PageIndex = {
+                Items = Blog.GetPage 5 pageNo
                 NextPage = Blog.HasNextPage 5 pageNo
                 PrevPage = Blog.HasPrevPage 5 pageNo
             }
             page |> OKJsonBytes
         )
         pathScan "/blog/posts/entry/%d" (fun (entryId) ->
-            // TODO: what if there is no entry found? first check if it exists! 
+            // TODO: what if there is no entry found? first check if it exists!
             let foundIndex = Blog.items |> Seq.findIndex (fun item -> entryId |> item.ID.Equals)
             let foundItem = Blog.items.[foundIndex]
             let nextItem = Blog.items.[foundIndex + 1]
