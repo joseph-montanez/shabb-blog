@@ -66,6 +66,7 @@
     <Compile Include="Pagination.fs" />
     <Compile Include="Post.fs" />
     <Compile Include="Pager.fs" />
+    <Compile Include="Contact.fs" />
     <Compile Include="Library.fs" />
     <None Include="Script.fsx" />
     <None Include="paket.references" />

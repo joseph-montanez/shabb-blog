@@ -5,6 +5,7 @@ open Tag
 open Pager
 open Post
 open Pagination
+open Contact
 
 //-- Log Requests to Console
 open System
@@ -63,6 +64,7 @@ module Blog =
 
     let sample = "blog-4fd782ad.xml"
 
+    //-- TODO: all these functions need to be refactored to the post library
     let GetPushblishedPosts (items : Post.Post []) =
         Array.filter (fun (post : Post.Post) -> post.Published) items
 
@@ -85,17 +87,6 @@ module Blog =
     let CountPages perPage =
         let pages : double = (double publishedPosts.Length) / (double perPage)
         (int (Math.Ceiling pages))
-
-    let EntryToPagePreview (optionalPost : Post.Post option) =
-        match optionalPost with
-        | Some post ->
-            Some({
-                    Pagination.PagePreview.ID = post.ID
-                    Pagination.PagePreview.PubDate = post.PubDate
-                    Pagination.PagePreview.Title = post.Title
-                    Pagination.PagePreview.Slug = post.Slug
-            })
-        | None -> None
 
 
 
@@ -132,15 +123,12 @@ let testapp : WebPart =
 
 let contact : WebPart =
     corsHeader >>= choose [
-        POST  >>= path "/contact" >>= mapJson (fun data ->
-            printfn "%A" data
+        POST  >>= path "/contact" >>= mapJson (fun (data:Contact.ContactData) ->
+            printfn "email is '%s'" data.email
+            let nothign = Environment.GetEnvironmentVariable "PATH"
+            printfn "%s" nothign
             data
         )
-//        request (fun r ->
-//            let jsonString = System.Text.Encoding.ASCII.GetString r.rawForm
-//
-//            sprintf "%s" (System.Text.Encoding.ASCII.GetString r.rawForm) |> OK
-//        )
     ]
 
 let blog : WebPart =
