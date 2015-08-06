@@ -23,6 +23,3 @@
 *.PDF diff=astextplain
 *.rtf diff=astextplain
 *.RTF diff=astextplain
-
-node_modules
-src/Website/node_modules

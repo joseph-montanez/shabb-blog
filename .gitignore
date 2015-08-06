@@ -189,3 +189,6 @@ docs/content/release-notes.md
 
 # Fake outputs
 .fake
+
+# NodeJS
+node_modules
