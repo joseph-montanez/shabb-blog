@@ -3,7 +3,7 @@ module ShabbBlog
 open XmlTools
 open Tag
 open Pager
-open Entry
+open Post
 open Pagination
 
 //-- Log Requests to Console
@@ -59,22 +59,23 @@ module Blog =
     let ParseDate date = System.DateTime.Parse date
     let doc = Xml.Load xmlFilename
     let tags = Tag.parse doc
-    let items : Entry.Entry list = Entry.Parse doc
+    let items : Post.Post[] = Post.Parse doc |> List.toArray
 
     let sample = "blog-4fd782ad.xml"
 
-    let GetPushblishedPosts (items : Entry.Entry list) =
-        List.filter (fun (entry : Entry.Entry) -> entry.Published) items
+    let GetPushblishedPosts (items : Post.Post []) =
+        Array.filter (fun (post : Post.Post) -> post.Published) items
 
-    let SortPostsByDate (items : Entry.Entry list) =
-        List.sortBy (fun (entry : Entry.Entry) -> -entry.PubDate.ToBinary()) items
+    let SortPostsByDate (items : Post.Post []) =
+        Array.sortBy (fun (post : Post.Post) -> -post.PubDate.ToBinary()) items
 
     let GetSortedPushblishedPosts items =
         items
             |> GetPushblishedPosts
             |> SortPostsByDate
-
+            
     let publishedPosts = items |> GetSortedPushblishedPosts
+    let publishedPostsLength = Array.length publishedPosts
 
     let GetPost items index = items[index]
 
@@ -85,22 +86,21 @@ module Blog =
         let pages : double = (double publishedPosts.Length) / (double perPage)
         (int (Math.Ceiling pages))
 
-    let GetPage perPage pageNo =
-        let startOf = Math.Max(0, perPage * (pageNo - 1))
-        let endOf = Math.Min(publishedPosts.Length - 1, startOf + perPage)
-
-        (publishedPosts |> Seq.toArray).[startOf..endOf]
-
-    let EntryToPagePreview (entry : Entry.Entry) =
-        let item : Pagination.PagePreview = {
-            ID = entry.ID
-            PubDate = entry.PubDate
-            Title = entry.Title
-            Slug = entry.Slug
-        }
-        item
+    let EntryToPagePreview (optionalPost : Post.Post option) =
+        match optionalPost with
+        | Some post ->
+            Some({
+                    Pagination.PagePreview.ID = post.ID
+                    Pagination.PagePreview.PubDate = post.PubDate
+                    Pagination.PagePreview.Title = post.Title
+                    Pagination.PagePreview.Slug = post.Slug
+            })
+        | None -> None
 
 
+
+let GetPublishedPostsPage = Pager.Page.GetPage Blog.publishedPosts
+let GetPublishedPostsEntry = Pager.Page.GetEntry Blog.publishedPosts Blog.publishedPostsLength
 
 
 let GetIndex = browseFileHome (Blog.processDir + "/index.html")
@@ -114,14 +114,14 @@ let cfg = {
         bindings = [ HttpBinding.mk' HTTP "0.0.0.0" 8083 ]
 }
 
-let allow_cors : WebPart =
-    choose [
-        OPTIONS 
-            >>= setHeader "Access-Control-Allow-Origin" "*" 
-            >>= setHeader "Access-Control-Allow-Methods" "POST, GET, OPTIONS" 
-            >>= setHeader "Access-Control-Allow-Headers" "X-Requested-With, Origin, Content-Type, Access-Control-Allow-Origin" 
-            >>= OK ""
-    ]
+let corsHeader : WebPart =
+        setHeader "Access-Control-Allow-Origin" "*" 
+let corsHeaderFull : WebPart =
+        setHeader "Access-Control-Allow-Origin" "*" 
+        >>= setHeader "Access-Control-Allow-Methods" "POST, GET, OPTIONS" 
+        >>= setHeader "Access-Control-Allow-Headers" "X-Requested-With, Origin, Content-Type, Access-Control-Allow-Origin" 
+
+let allowCors : WebPart = choose [OPTIONS >>= corsHeaderFull >>= OK ""]
 
 
 let testapp : WebPart =
@@ -130,52 +130,36 @@ let testapp : WebPart =
         pathScan "/add/%d/%d" (fun (a,b) -> OK((a + b).ToString()))
     ]
 
+let contact : WebPart =
+    corsHeader >>= choose [
+        POST  >>= path "/contact" >>= mapJson (fun data ->
+            printfn "%A" data
+            data
+        )
+//        request (fun r ->
+//            let jsonString = System.Text.Encoding.ASCII.GetString r.rawForm
+//
+//            sprintf "%s" (System.Text.Encoding.ASCII.GetString r.rawForm) |> OK
+//        )
+    ]
+
 let blog : WebPart =
-  choose
+  corsHeader >>= choose
     [
-        GET >>= setHeader "Access-Control-Allow-Origin" "*" >>= pathScan "/blog/posts/page/%d" (fun (pageNo) ->
-            let entryToExcerpt (entry:Entry.Entry.Entry) = 
-                let excerpt : Entry.Excerpt = { 
-                    ID = entry.ID
-                    Slug = entry.Slug
-                    Title = entry.Title
-                    PubDate = entry.PubDate
-                }
-                excerpt
-            let page : Page.PageIndex = {
-                Items = Blog.GetPage 5 pageNo |> Array.map entryToExcerpt
-                NextPage = Blog.HasNextPage 5 pageNo
-                PrevPage = Blog.HasPrevPage pageNo
-            }
-            page |> OKJsonBytes
-        )
-        pathScan "/blog/posts/entry/%d" (fun (entryId) ->
-            // TODO: what if there is no entry found? first check if it exists!
-            let foundIndex = Blog.items |> Seq.findIndex (fun item -> entryId |> item.ID.Equals)
-            let foundItem = Blog.items.[foundIndex]
-            let nextItem = Blog.items.[foundIndex + 1]
-            let prevItem = Blog.items.[foundIndex - 1]
-            // TODO: there may not be a next or previous
-            let nextPage = Blog.EntryToPagePreview nextItem
-            let prevPage = Blog.EntryToPagePreview prevItem
-            let item = {
-                foundItem with
-                    NextPage = Some(nextPage)
-                    PrevPage = Some(prevPage)
-            }
-            OKJsonBytes(item)
-        )
+        pathScan "/blog/posts/page/%d" (fun (pageNo) -> GetPublishedPostsPage pageNo |> OKJsonBytes)
+        pathScan "/blog/posts/entry/%d" (fun (entryId) -> GetPublishedPostsEntry entryId |> OKJsonBytes)
         path "/blog/posts/pages/count" >>= (OK <| (Blog.CountPages 5).ToString())
         path "/blog/tags/all" >>= (Blog.tags |> Seq.toArray |> OKJsonBytes)
     ]
 
 
 choose [
-    allow_cors
+    allowCors
     GET >>= path "/" >>= setHeader "ABC" "123" >>= OK "YES!"
     GET >>= path "/static" >>= GetStatic;
     //GET >>= pathScan "/api/blog/page/%d" JsonResponse.GetCar;
     testapp
     blog
+    contact
     NOT_FOUND "Found no handlers"
 ] |> startWebServer cfg

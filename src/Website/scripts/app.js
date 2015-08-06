@@ -27,6 +27,10 @@ angular.module('spa2App', [
         templateUrl: 'views/blog.html',
         controller: 'BlogListCtrl'
       })
+      .when('/contact', {
+        templateUrl: 'views/contact.html',
+        controller: 'ContactCtrl'
+      })
       .when('/blog/page/:PageNo', {
         templateUrl: 'views/blog.html',
         controller: 'BlogListCtrl'

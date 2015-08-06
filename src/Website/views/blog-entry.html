@@ -4,8 +4,8 @@
 	<h2 class="date">{{Blog.PubDate | date:longDate}}</h2>
 	<div compile="Blog.Content"></div>
 	<br />
-	<a class="page prev" href="#!blog/entry/{{Blog.PrevEntry.value.URL}}/{{Blog.PrevEntry.value.ID}}" ng-if="Blog.PrevEntry != null">Previous Entry</a>
-	<a class="page next" href="#!blog/entry/{{Blog.NextEntry.value.URL}}/{{Blog.NextEntry.value.ID}}" ng-if="Blog.NextEntry != null">Next Entry</a>
+	<a class="page prev" href="#!blog/entry/{{Blog.PrevPage.value.Slug}}/{{Blog.PrevPage.value.ID}}" ng-if="Blog.PrevPage != null">Previous Entry</a>
+	<a class="page next" href="#!blog/entry/{{Blog.NextPage.value.Slug}}/{{Blog.NextPage.value.ID}}" ng-if="Blog.NextPage != null">Next Entry</a>
 	<br clear="both">
 </div>
 

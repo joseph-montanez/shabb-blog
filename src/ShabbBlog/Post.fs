@@ -1,4 +1,4 @@
-﻿namespace Entry
+﻿namespace Post
 
 open System
 
@@ -7,6 +7,8 @@ open System.Xml
 open System.Xml.Linq
 
 //-- JSON Serialization
+open Microsoft.FSharp.Reflection 
+open System.Reflection 
 open System.Runtime.Serialization
 open System.Runtime.Serialization.Json
 open System.IO
@@ -16,9 +18,9 @@ open Utils
 open Pagination
 
 
-module Entry =
+module Post =
     [<DataContract>]
-    type Entry = {
+    type Post = {
         [<field : DataMember(Name="ID")>]
         ID : int
         [<field : DataMember(Name="Slug")>]
@@ -65,3 +67,12 @@ module Entry =
                 Categories = [|for categoryEl in el.Elements(Xml.XN "category") ->categoryEl.Value|]
             }
     ]
+
+    
+    let PostToExcerpt (post:Post) = 
+        { 
+            ID = post.ID
+            Slug = post.Slug
+            Title = post.Title
+            PubDate = post.PubDate
+        }

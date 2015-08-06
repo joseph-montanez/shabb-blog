@@ -1,0 +1,12 @@
+<div ng-include src="'views/header.html'"></div>
+
+<form method="POST">
+	<label for="fullname">Full Name</label><input id="fullname" name="fullname" type="text" required ng-model="contact.fullname">
+	<label for="email">Email</label><input id="email" name="email" type="email" ng-model="contact.email" required>
+	<label for="message">Message</label>
+	<textarea id="message" required name="message" ng-model="contact.message"></textarea>
+	<p></p>
+	<input type="submit" value="Send" ng-click="send(contact)" >
+</form>
+
+<div ng-include src="'views/footer.html'"></div>

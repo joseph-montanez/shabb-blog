@@ -64,7 +64,7 @@
     <Compile Include="XmlTools.fs" />
     <Compile Include="Tag.fs" />
     <Compile Include="Pagination.fs" />
-    <Compile Include="Entry.fs" />
+    <Compile Include="Post.fs" />
     <Compile Include="Pager.fs" />
     <Compile Include="Library.fs" />
     <None Include="Script.fsx" />
